@@ -10,15 +10,19 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
-	v1alpha1 "github.com/upbound/upjet-provider-template/apis/null/v1alpha1"
-	v1alpha1apis "github.com/upbound/upjet-provider-template/apis/v1alpha1"
-	v1beta1 "github.com/upbound/upjet-provider-template/apis/v1beta1"
+	v1alpha1 "github.com/karthikeyanas/provider-confluent/apis/environment/v1alpha1"
+	v1alpha1kafkacluster "github.com/karthikeyanas/provider-confluent/apis/kafkacluster/v1alpha1"
+	v1alpha1kafkatopic "github.com/karthikeyanas/provider-confluent/apis/kafkatopic/v1alpha1"
+	v1alpha1apis "github.com/karthikeyanas/provider-confluent/apis/v1alpha1"
+	v1beta1 "github.com/karthikeyanas/provider-confluent/apis/v1beta1"
 )
 
 func init() {
 	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
 	AddToSchemes = append(AddToSchemes,
 		v1alpha1.SchemeBuilder.AddToScheme,
+		v1alpha1kafkacluster.SchemeBuilder.AddToScheme,
+		v1alpha1kafkatopic.SchemeBuilder.AddToScheme,
 		v1alpha1apis.SchemeBuilder.AddToScheme,
 		v1beta1.SchemeBuilder.AddToScheme,
 	)

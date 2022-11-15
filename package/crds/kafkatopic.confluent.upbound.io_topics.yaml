@@ -5,18 +5,18 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
   creationTimestamp: null
-  name: resources.null.template.upbound.io
+  name: topics.kafkatopic.confluent.upbound.io
 spec:
-  group: null.template.upbound.io
+  group: kafkatopic.confluent.upbound.io
   names:
     categories:
     - crossplane
     - managed
-    - template
-    kind: Resource
-    listKind: ResourceList
-    plural: resources
-    singular: resource
+    - confluent
+    kind: Topic
+    listKind: TopicList
+    plural: topics
+    singular: topic
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -35,7 +35,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Resource is the Schema for the Resources API. <no value>
+        description: Topic is the Schema for the Topics API. <no value>
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -50,7 +50,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: ResourceSpec defines the desired state of Resource
+            description: TopicSpec defines the desired state of Topic
             properties:
               deletionPolicy:
                 default: Delete
@@ -63,13 +63,80 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  triggers:
+                  config:
                     additionalProperties:
                       type: string
-                    description: A map of arbitrary strings that, when changed, will
-                      force the null resource to be replaced, re-running any associated
-                      provisioners.
+                    description: The custom topic settings to set (e.g., `"cleanup.policy"
+                      = "compact"`).
                     type: object
+                  credentials:
+                    description: The Cluster API Credentials.
+                    items:
+                      properties:
+                        keySecretRef:
+                          description: The Cluster API Key for your Confluent Cloud
+                            cluster.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: Name of the secret.
+                              type: string
+                            namespace:
+                              description: Namespace of the secret.
+                              type: string
+                          required:
+                          - key
+                          - name
+                          - namespace
+                          type: object
+                        secretSecretRef:
+                          description: The Cluster API Secret for your Confluent Cloud
+                            cluster.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: Name of the secret.
+                              type: string
+                            namespace:
+                              description: Namespace of the secret.
+                              type: string
+                          required:
+                          - key
+                          - name
+                          - namespace
+                          type: object
+                      required:
+                      - keySecretRef
+                      - secretSecretRef
+                      type: object
+                    type: array
+                  kafkaCluster:
+                    items:
+                      properties:
+                        id:
+                          description: The Kafka cluster ID (e.g., `lkc-12345`).
+                          type: string
+                      required:
+                      - id
+                      type: object
+                    type: array
+                  partitionsCount:
+                    description: The number of partitions to create in the topic.
+                      Defaults to `6`.
+                    type: number
+                  restEndpoint:
+                    description: The REST endpoint of the Kafka cluster (e.g., `https://pkc-00000.us-central1.gcp.confluent.cloud:443`).
+                    type: string
+                  topicName:
+                    description: The name of the topic, for example, `orders-1`.
+                    type: string
+                required:
+                - kafkaCluster
+                - topicName
                 type: object
               providerConfigRef:
                 default:
@@ -243,7 +310,7 @@ spec:
             - forProvider
             type: object
           status:
-            description: ResourceStatus defines the observed state of Resource.
+            description: TopicStatus defines the observed state of Topic.
             properties:
               atProvider:
                 properties:

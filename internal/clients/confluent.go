@@ -15,7 +15,7 @@ import (
 
 	"github.com/upbound/upjet/pkg/terraform"
 
-	"github.com/upbound/upjet-provider-template/apis/v1beta1"
+	"github.com/karthikeyanas/provider-confluent/apis/v1beta1"
 )
 
 const (
@@ -24,7 +24,16 @@ const (
 	errGetProviderConfig    = "cannot get referenced ProviderConfig"
 	errTrackUsage           = "cannot track ProviderConfig usage"
 	errExtractCredentials   = "cannot extract credentials"
-	errUnmarshalCredentials = "cannot unmarshal template credentials as JSON"
+	errUnmarshalCredentials = "cannot unmarshal confluent credentials as JSON"
+)
+
+const (
+	cloudApidKey      = "cloud_api_key"
+	cloudApiSecret    = "cloud_api_secret"
+	kafkaApiKey       = "kafka_api_key"
+	kafkaApiSecret    = "kafka_api_secret"
+	kafkaRestEndpoint = "kafka_rest_endpoint"
+	endpoint          = "endpoint"
 )
 
 // TerraformSetupBuilder builds Terraform a terraform.SetupFn function which
@@ -63,10 +72,25 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		}
 
 		// Set credentials in Terraform provider configuration.
-		/*ps.Configuration = map[string]any{
-			"username": creds["username"],
-			"password": creds["password"],
-		}*/
+		ps.Configuration = map[string]any{}
+		if v, ok := creds[cloudApidKey]; ok {
+			ps.Configuration[cloudApidKey] = v
+		}
+		if v, ok := creds[cloudApiSecret]; ok {
+			ps.Configuration[cloudApiSecret] = v
+		}
+		if v, ok := creds[kafkaApiKey]; ok {
+			ps.Configuration[kafkaApiKey] = v
+		}
+		if v, ok := creds[kafkaApiSecret]; ok {
+			ps.Configuration[kafkaApiSecret] = v
+		}
+		if v, ok := creds[kafkaRestEndpoint]; ok {
+			ps.Configuration[kafkaRestEndpoint] = v
+		}
+		if v, ok := creds[endpoint]; ok {
+			ps.Configuration[endpoint] = v
+		}
 		return ps, nil
 	}
 }
